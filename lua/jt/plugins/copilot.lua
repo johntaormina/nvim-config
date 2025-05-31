@@ -21,7 +21,7 @@ return {
 					},
 				},
 				suggestion = {
-					enabled = false,
+					enabled = true,
 					auto_trigger = true,
 					debounce = 75,
 					keymap = {
@@ -57,18 +57,6 @@ return {
 			)
 			vim.keymap.set(
 				"n",
-				"<leader>ce",
-				":Copilot enable<CR>",
-				{ noremap = true, silent = true, desc = "Enable Copilot" }
-			)
-			vim.keymap.set(
-				"n",
-				"<leader>cd",
-				":Copilot disable<CR>",
-				{ noremap = true, silent = true, desc = "Disable Copilot" }
-			)
-			vim.keymap.set(
-				"n",
 				"<leader>cs",
 				":Copilot status<CR>",
 				{ noremap = true, silent = true, desc = "Copilot status" }
@@ -82,41 +70,29 @@ return {
 					end
 				end)
 			end, { desc = "Quick Chat" })
-
-			-- Toggle Copilot suggestion mode
-			vim.keymap.set("n", "<leader>ct", function()
-				local suggestion_enabled = require("copilot.suggestion").is_enabled()
-				if suggestion_enabled then
-					vim.cmd("Copilot suggestion disable")
-					print("Copilot suggestions disabled")
-				else
-					vim.cmd("Copilot suggestion enable")
-					print("Copilot suggestions enabled")
-				end
-			end, { noremap = true, silent = true, desc = "Toggle Copilot suggestions" })
+		end,
+	},
+	--
+	-- -- -- Copilot-cmp integration
+	{
+		"zbirenbaum/copilot-cmp",
+		dependencies = {
+			"zbirenbaum/copilot.lua",
+			"hrsh7th/nvim-cmp",
+		},
+		config = function()
+			require("copilot_cmp").setup({
+				method = "getCompletionsCycling",
+				formatters = {
+					label = require("copilot_cmp.format").format_label_text,
+					insert_text = require("copilot_cmp.format").format_insert_text,
+					preview = require("copilot_cmp.format").deindent,
+				},
+			})
 		end,
 	},
 
-	-- -- Copilot-cmp integration
-	-- {
-	-- 	"zbirenbaum/copilot-cmp",
-	-- 	dependencies = {
-	-- 		"zbirenbaum/copilot.lua",
-	-- 		"hrsh7th/nvim-cmp",
-	-- 	},
-	-- 	config = function()
-	-- 		require("copilot_cmp").setup({
-	-- 			method = "getCompletionsCycling",
-	-- 			formatters = {
-	-- 				label = require("copilot_cmp.format").format_label_text,
-	-- 				insert_text = require("copilot_cmp.format").format_insert_text,
-	-- 				preview = require("copilot_cmp.format").deindent,
-	-- 			},
-	-- 		})
-	-- 	end,
-	-- },
-	--
-	-- -- Copilot Chat
+	-- -- -- Copilot Chat
 	{
 		"CopilotC-Nvim/CopilotChat.nvim",
 		dependencies = {
@@ -127,6 +103,10 @@ return {
 			debug = false,
 			model = "gpt-4", -- or gpt-3.5-turbo
 			show_help = true,
+			selection = function(source)
+				local select = require("CopilotChat.select")
+				return select.visual(source) or select.buffer(source)
+			end,
 			prompts = {
 				Explain = "Explain how the following code works:",
 				Review = "Review the following code and provide suggestions for improvement:",
@@ -150,7 +130,7 @@ return {
 			vim.keymap.set(
 				"v",
 				"<leader>cc",
-				":CopilotChatVisual<CR>",
+				":CopilotChat<CR>",
 				{ noremap = true, silent = true, desc = "Open Copilot Chat with visual selection" }
 			)
 			vim.keymap.set(
@@ -162,7 +142,7 @@ return {
 			vim.keymap.set(
 				"v",
 				"<leader>ce",
-				":CopilotChatExplainVisual<CR>",
+				":CopilotChatExplain<CR>",
 				{ noremap = true, silent = true, desc = "Explain selected code" }
 			)
 			vim.keymap.set(
@@ -174,7 +154,7 @@ return {
 			vim.keymap.set(
 				"v",
 				"<leader>cr",
-				":CopilotChatReviewVisual<CR>",
+				":CopilotChatReview<CR>",
 				{ noremap = true, silent = true, desc = "Review selected code" }
 			)
 			vim.keymap.set(
@@ -186,7 +166,7 @@ return {
 			vim.keymap.set(
 				"v",
 				"<leader>ct",
-				":CopilotChatTestsVisual<CR>",
+				":CopilotChatTests<CR>",
 				{ noremap = true, silent = true, desc = "Generate tests for selected code" }
 			)
 			vim.keymap.set(
@@ -198,7 +178,7 @@ return {
 			vim.keymap.set(
 				"v",
 				"<leader>cf",
-				":CopilotChatFixVisual<CR>",
+				":CopilotChatFix<CR>",
 				{ noremap = true, silent = true, desc = "Fix selected code" }
 			)
 		end,
