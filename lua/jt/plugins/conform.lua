@@ -9,6 +9,9 @@ return {
                 rust = { "rustfmt", lsp_format = "fallback" },
                 javascript = { "prettierd", "prettier", stop_after_first = true },
                 go = { "goimports", "gofmt" },
+                json = { "jq" },
+                html = { "prettierd", "prettier" },
+                css = { "prettierd", "prettier" },
             },
             format_on_save = {
                 -- These options will be passed to conform.format()

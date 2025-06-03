@@ -28,4 +28,17 @@ vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
+vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.\S\+]]
+
+-- CSS Settings
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "css",
+    callback = function()
+        vim.opt_local.shiftwidth = 2
+        vim.opt_local.tabstop = 2
+        vim.opt_local.expandtab = true
+    end,
+})
+
+
 -- vim.opt.colorcolumn = "20"
